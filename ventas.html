@@ -1,0 +1,47 @@
+<head>
+    <title>Ventas - Frutería Nenita</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<div class="navbar">
+    🛒 Ventas
+
+    <button onclick="go('menu.html')">
+        ← Volver
+    </button>
+</div>
+
+<div class="container">
+
+    <h1>Registrar Venta</h1>
+
+    <input type="text" placeholder="Código del producto">
+
+    <input type="number" placeholder="Cantidad">
+
+    <button>
+        Agregar al carrito
+    </button>
+
+    <div class="card">
+        <h2>🍎 Carrito</h2>
+
+        <p>Manzana - 2 kg - $40</p>
+        <p>Plátano - 1 kg - $25</p>
+    </div>
+
+    <div class="card">
+        <h2>Total: $65</h2>
+    </div>
+
+    <button onclick="go('cobro.html')">
+        Cobrar
+    </button>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>

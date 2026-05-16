@@ -1,0 +1,62 @@
+<head>
+    <title>Inventario - Frutería Nenita</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<div class="navbar">
+    📦 Inventario
+
+    <button onclick="go('menu.html')">
+        ← Volver
+    </button>
+</div>
+
+<div class="container">
+
+    <h1>Control de Inventario</h1>
+
+    <input type="text" placeholder="Buscar producto">
+
+    <select>
+        <option>Entrada</option>
+        <option>Salida</option>
+        <option>Merma</option>
+    </select>
+
+    <input type="number" placeholder="Cantidad">
+
+    <button>
+        Registrar Movimiento
+    </button>
+
+    <div class="alert">
+        ⚠ Producto con stock bajo
+    </div>
+
+    <table>
+        <tr>
+            <th>Producto</th>
+            <th>Stock</th>
+            <th>Estado</th>
+        </tr>
+
+        <tr>
+            <td>🥬 Lechuga</td>
+            <td>5</td>
+            <td>Stock Bajo</td>
+        </tr>
+
+        <tr>
+            <td>🍎 Manzana</td>
+            <td>40</td>
+            <td>Disponible</td>
+        </tr>
+    </table>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>

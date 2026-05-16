@@ -1,0 +1,49 @@
+<head>
+    <title>Cobro - Frutería Nenita</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<div class="navbar">
+    💳 Cobro
+
+    <button onclick="go('ventas.html')">
+        ← Volver
+    </button>
+</div>
+
+<div class="container">
+
+    <h1>Finalizar Venta</h1>
+
+    <div class="card">
+        <h2>🛒 Resumen</h2>
+
+        <p>🍎 Manzana - $40</p>
+        <p>🍌 Plátano - $25</p>
+    </div>
+
+    <div class="card">
+        <h2>Total a pagar: $65</h2>
+    </div>
+
+    <select>
+        <option>Efectivo</option>
+        <option>Tarjeta</option>
+        <option>Transferencia</option>
+    </select>
+
+    <button onclick="alert('Venta realizada correctamente')">
+        Confirmar Cobro
+    </button>
+
+    <div class="alert">
+        ✔ Verifique el método de pago antes de finalizar.
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>

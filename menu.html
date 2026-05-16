@@ -1,0 +1,46 @@
+<head>
+    <title>Menú Principal</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<div class="navbar">
+    🍎 Frutería Nenita
+
+    <button onclick="go('login.html')">
+        Cerrar Sesión
+    </button>
+</div>
+
+<div class="container">
+
+    <div class="menu-grid">
+
+        <div class="menu-card" onclick="go('ventas.html')">
+            <div class="menu-icon">🛒</div>
+            <div class="menu-title">Ventas</div>
+        </div>
+
+        <div class="menu-card" onclick="go('productos.html')">
+            <div class="menu-icon">🍎</div>
+            <div class="menu-title">Productos</div>
+        </div>
+
+        <div class="menu-card" onclick="go('inventario.html')">
+            <div class="menu-icon">📦</div>
+            <div class="menu-title">Inventario</div>
+        </div>
+
+        <div class="menu-card" onclick="go('reportes.html')">
+            <div class="menu-icon">📊</div>
+            <div class="menu-title">Reportes</div>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>

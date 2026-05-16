@@ -1,0 +1,62 @@
+<head>
+    <title>Productos - Frutería Nenita</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<div class="navbar">
+    🍎 Productos
+
+    <button onclick="go('menu.html')">
+        ← Volver
+    </button>
+</div>
+
+<div class="container">
+
+    <h1>Administrar Productos</h1>
+
+    <input type="text" placeholder="Nombre del producto">
+
+    <input type="text" placeholder="Código">
+
+    <input type="number" placeholder="Precio">
+
+    <input type="number" placeholder="Stock">
+
+    <select>
+        <option>Kilo</option>
+        <option>Pieza</option>
+        <option>Caja</option>
+    </select>
+
+    <button>
+        Guardar Producto
+    </button>
+
+    <table>
+        <tr>
+            <th>Producto</th>
+            <th>Precio</th>
+            <th>Stock</th>
+        </tr>
+
+        <tr>
+            <td>🍎 Manzana</td>
+            <td>$20</td>
+            <td>50</td>
+        </tr>
+
+        <tr>
+            <td>🍌 Plátano</td>
+            <td>$25</td>
+            <td>40</td>
+        </tr>
+    </table>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
