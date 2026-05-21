@@ -1,62 +1,346 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
 <head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Productos - Frutería Nenita</title>
+
+    <!-- CSS PERSONALIZADO -->
     <link rel="stylesheet" href="styles.css">
+
+    <!-- BOOTSTRAP -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
 </head>
 
 <body>
 
-<div class="navbar">
-    🍎 Productos
+    <!-- NAVBAR -->
+    <div class="navbar">
 
-    <button onclick="go('menu.html')">
-        ← Volver
-    </button>
-</div>
+        🍎 Productos
 
-<div class="container">
+        <button onclick="go('menu.html')">
+            ← Volver
+        </button>
 
-    <h1>Administrar Productos</h1>
+    </div>
 
-    <input type="text" placeholder="Nombre del producto">
+    <!-- CONTENIDO -->
+    <div class="container mt-4">
 
-    <input type="text" placeholder="Código">
+        <h1 class="mb-4">
+            Administrar Productos
+        </h1>
 
-    <input type="number" placeholder="Precio">
+        <!-- INPUT NOMBRE -->
+        <input
+            id="nombre"
+            type="text"
+            placeholder="Nombre"
+            class="form-control mb-2"
+        >
 
-    <input type="number" placeholder="Stock">
+        <!-- INPUT CODIGO -->
+        <input
+            id="codigo"
+            type="text"
+            placeholder="Código"
+            class="form-control mb-2"
+        >
 
-    <select>
-        <option>Kilo</option>
-        <option>Pieza</option>
-        <option>Caja</option>
-    </select>
+        <!-- INPUT PRECIO -->
+        <input
+            id="precio"
+            type="number"
+            placeholder="Precio"
+            class="form-control mb-2"
+        >
 
-    <button>
-        Guardar Producto
-    </button>
+        <!-- INPUT STOCK -->
+        <input
+            id="stock"
+            type="number"
+            placeholder="Stock"
+            class="form-control mb-2"
+        >
 
-    <table>
-        <tr>
-            <th>Producto</th>
-            <th>Precio</th>
-            <th>Stock</th>
-        </tr>
+        <!-- TIPO VENTA -->
+        <select
+            id="tipoVenta"
+            class="form-control mb-3"
+        >
 
-        <tr>
-            <td>🍎 Manzana</td>
-            <td>$20</td>
-            <td>50</td>
-        </tr>
+            <option>Kilo</option>
 
-        <tr>
-            <td>🍌 Plátano</td>
-            <td>$25</td>
-            <td>40</td>
-        </tr>
-    </table>
+            <option>Pieza</option>
 
-</div>
+            <option>Caja</option>
 
-<script src="script.js"></script>
+        </select>
+
+        <!-- BOTON -->
+        <button
+            onclick="guardarProducto()"
+            class="btn btn-success mb-4"
+        >
+            Guardar Producto
+        </button>
+
+        <!-- LISTA PRODUCTOS -->
+        <div id="listaProductos"></div>
+
+    </div>
+
+    <!-- SCRIPT GLOBAL -->
+    <script src="script.js"></script>
+
+    <!-- VALIDAR SESION -->
+    <script>
+
+        if(!localStorage.getItem("usuario")){
+
+            window.location.href = "login.html";
+
+        }
+
+    </script>
+
+    <!-- SCRIPT PRODUCTOS -->
+    <script>
+
+        // ==========================================
+        // CARGAR PRODUCTOS
+        // ==========================================
+
+        async function cargarProductos(){
+
+            try {
+
+                const response = await fetch(
+                    "http://localhost:3000/productos"
+                );
+
+                const productos = await response.json();
+
+                const lista = document.getElementById(
+                    "listaProductos"
+                );
+
+                lista.innerHTML = "";
+
+                productos.forEach(producto => {
+
+                    lista.innerHTML += `
+                    
+                    <div class="card p-3 mb-3">
+
+                        <h3>
+                            ${producto.nombre}
+                        </h3>
+
+                        <p>
+                            Código: ${producto.codigo}
+                        </p>
+
+                        <p>
+                            Precio: $${producto.precio}
+                        </p>
+
+                        <p>
+                            Stock: ${producto.stock}
+                        </p>
+
+                        <button
+                            class="btn btn-danger mt-2"
+                            onclick="eliminarProducto(${producto.id_producto})"
+                        >
+                            Eliminar
+                        </button>
+
+                    </div>
+                    `;
+                });
+
+            } catch(error){
+
+                console.log(error);
+
+                alert("Error cargando productos");
+            }
+        }
+
+        // ==========================================
+        // GUARDAR PRODUCTO
+        // ==========================================
+
+        async function guardarProducto(){
+
+            const nombre =
+                document.getElementById("nombre").value;
+
+            const codigo =
+                document.getElementById("codigo").value;
+
+            const precio =
+                document.getElementById("precio").value;
+
+            const stock =
+                document.getElementById("stock").value;
+
+            const tipo_venta =
+                document.getElementById("tipoVenta").value;
+
+            // ==========================
+            // VALIDACIONES
+            // ==========================
+
+            if(
+                nombre === "" ||
+                codigo === "" ||
+                precio === "" ||
+                stock === ""
+            ){
+
+                alert("Completa todos los campos");
+
+                return;
+            }
+
+            if(precio <= 0){
+
+                alert(
+                    "El precio debe ser mayor a 0"
+                );
+
+                return;
+            }
+
+            if(stock < 0){
+
+                alert("Stock inválido");
+
+                return;
+            }
+
+            // ==========================
+            // ENVIAR A BACKEND
+            // ==========================
+
+            try {
+
+                await fetch(
+                    "http://localhost:3000/productos",
+                    {
+
+                        method:"POST",
+
+                        headers:{
+                            "Content-Type":"application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            nombre,
+                            codigo,
+                            precio,
+                            stock,
+                            tipo_venta
+
+                        })
+                    }
+                );
+
+                alert("Producto agregado");
+
+                // ==========================
+                // LIMPIAR CAMPOS
+                // ==========================
+
+                document.getElementById(
+                    "nombre"
+                ).value = "";
+
+                document.getElementById(
+                    "codigo"
+                ).value = "";
+
+                document.getElementById(
+                    "precio"
+                ).value = "";
+
+                document.getElementById(
+                    "stock"
+                ).value = "";
+
+                // ==========================
+                // RECARGAR PRODUCTOS
+                // ==========================
+
+                cargarProductos();
+
+            } catch(error){
+
+                console.log(error);
+
+                alert(
+                    "Error agregando producto"
+                );
+            }
+        }
+
+        // ==========================================
+        // ELIMINAR PRODUCTO
+        // ==========================================
+
+        async function eliminarProducto(id){
+
+            const confirmar = confirm(
+                "¿Eliminar producto?"
+            );
+
+            if(!confirmar){
+
+                return;
+            }
+
+            try {
+
+                await fetch(
+                    `http://localhost:3000/productos/${id}`,
+                    {
+
+                        method:"DELETE"
+                    }
+                );
+
+                alert("Producto eliminado");
+
+                cargarProductos();
+
+            } catch(error){
+
+                console.log(error);
+
+                alert(
+                    "Error eliminando producto"
+                );
+            }
+        }
+
+        // ==========================================
+        // INICIAR
+        // ==========================================
+
+        cargarProductos();
+
+    </script>
 
 </body>
+
+</html>
