@@ -2,20 +2,32 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
-const { conectarDB } = require('./db');
+const { conectarDB, sql } = require('./db');
 
 const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
 
+// ===============================
+// CONECTAR DB
+// ===============================
+
 conectarDB();
 
+// ===============================
+// RUTA PRINCIPAL
+// ===============================
+
 app.get('/', (req, res) => {
+
     res.send('Servidor funcionando correctamente');
+
 });
 
-const { sql } = require('./db');
+// ===============================
+// LOGIN
+// ===============================
 
 app.post('/login', async (req, res) => {
 
@@ -23,13 +35,19 @@ app.post('/login', async (req, res) => {
 
     try {
 
-        const result = await sql.query`
-            SELECT * FROM Usuarios
-            WHERE username = ${username}
-            AND password_hash = ${password}
-        `;
+        const result = await new sql.Request()
 
-        if (result.recordset.length > 0) {
+            .input('username', sql.VarChar, username)
+            .input('password', sql.VarChar, password)
+
+            .query(`
+                SELECT *
+                FROM Usuarios
+                WHERE username = @username
+                AND password_hash = @password
+            `);
+
+        if(result.recordset.length > 0){
 
             res.json({
                 success: true,
@@ -40,18 +58,18 @@ app.post('/login', async (req, res) => {
 
             res.json({
                 success: false,
-                mensaje: 'Usuario o contraseña incorrectos'
+                message: 'Usuario o contraseña incorrectos'
             });
 
         }
 
-    } catch (error) {
+    } catch(error){
 
         console.log(error);
 
         res.status(500).json({
             success: false,
-            mensaje: 'Error del servidor'
+            message: 'Error del servidor'
         });
 
     }
@@ -62,51 +80,77 @@ app.post('/login', async (req, res) => {
 // OBTENER PRODUCTOS
 // ===============================
 
-app.get("/productos", async(req, res) => {
+app.get('/productos', async(req, res) => {
 
     try {
 
-        const result = await sql.request().query(`
-            SELECT * FROM Productos
-            WHERE activo = 1
-        `);
+        const result = await new sql.Request()
+
+            .query(`
+                SELECT *
+                FROM Productos
+                WHERE activo = 1
+            `);
 
         res.json(result.recordset);
 
     } catch(error){
-        console.log(error);
-        res.status(500).json({
-            message:"Error obteniendo productos"
-        });
-    }
-});
 
+        console.log(error);
+
+        res.status(500).json({
+            message: 'Error obteniendo productos'
+        });
+
+    }
+
+});
 
 // ===============================
 // AGREGAR PRODUCTO
 // ===============================
 
-app.post("/productos", async(req, res) => {
+app.post('/productos', async(req, res) => {
 
-    const { nombre, codigo, precio, stock, tipo_venta } = req.body;
+    const {
+        nombre,
+        codigo,
+        precio,
+        stock,
+        tipo_venta
+    } = req.body;
 
     try {
 
-        await sql.request()
-            .input("nombre", sql.VarChar, nombre)
-            .input("codigo", sql.VarChar, codigo)
-            .input("precio", sql.Decimal(10,2), precio)
-            .input("stock", sql.Decimal(10,2), stock)
-            .input("tipo_venta", sql.VarChar, tipo_venta)
+        await new sql.Request()
+
+            .input('nombre', sql.VarChar, nombre)
+            .input('codigo', sql.VarChar, codigo)
+            .input('precio', sql.Decimal(10,2), precio)
+            .input('stock', sql.Decimal(10,2), stock)
+            .input('tipo_venta', sql.VarChar, tipo_venta)
+
             .query(`
                 INSERT INTO Productos
-                (nombre, codigo, precio, stock, tipo_venta)
+                (
+                    nombre,
+                    codigo,
+                    precio,
+                    stock,
+                    tipo_venta
+                )
                 VALUES
-                (@nombre, @codigo, @precio, @stock, @tipo_venta)
+                (
+                    @nombre,
+                    @codigo,
+                    @precio,
+                    @stock,
+                    @tipo_venta
+                )
             `);
 
         res.json({
-            success:true
+            success: true
         });
 
     } catch(error){
@@ -114,16 +158,18 @@ app.post("/productos", async(req, res) => {
         console.log(error);
 
         res.status(500).json({
-            message:"Error agregando producto"
+            message: 'Error agregando producto'
         });
+
     }
+
 });
 
 // ===============================
 // EDITAR PRODUCTO
 // ===============================
 
-app.put("/productos/:id", async(req, res) => {
+app.put('/productos/:id', async(req, res) => {
 
     const id = req.params.id;
 
@@ -136,12 +182,13 @@ app.put("/productos/:id", async(req, res) => {
 
     try {
 
-        await sql.request()
-            .input("id", sql.Int, id)
-            .input("nombre", sql.VarChar, nombre)
-            .input("codigo", sql.VarChar, codigo)
-            .input("precio", sql.Decimal(10,2), precio)
-            .input("stock", sql.Decimal(10,2), stock)
+        await new sql.Request()
+
+            .input('id', sql.Int, id)
+            .input('nombre', sql.VarChar, nombre)
+            .input('codigo', sql.VarChar, codigo)
+            .input('precio', sql.Decimal(10,2), precio)
+            .input('stock', sql.Decimal(10,2), stock)
 
             .query(`
                 UPDATE Productos
@@ -154,7 +201,7 @@ app.put("/productos/:id", async(req, res) => {
             `);
 
         res.json({
-            success:true
+            success: true
         });
 
     } catch(error){
@@ -162,23 +209,26 @@ app.put("/productos/:id", async(req, res) => {
         console.log(error);
 
         res.status(500).json({
-            message:"Error editando producto"
+            message: 'Error editando producto'
         });
+
     }
+
 });
 
 // ===============================
 // ELIMINAR PRODUCTO
 // ===============================
 
-app.delete("/productos/:id", async(req, res) => {
+app.delete('/productos/:id', async(req, res) => {
 
     const id = req.params.id;
 
     try {
 
-        await sql.request()
-            .input("id", sql.Int, id)
+        await new sql.Request()
+
+            .input('id', sql.Int, id)
 
             .query(`
                 UPDATE Productos
@@ -187,7 +237,7 @@ app.delete("/productos/:id", async(req, res) => {
             `);
 
         res.json({
-            success:true
+            success: true
         });
 
     } catch(error){
@@ -195,16 +245,18 @@ app.delete("/productos/:id", async(req, res) => {
         console.log(error);
 
         res.status(500).json({
-            message:"Error eliminando producto"
+            message: 'Error eliminando producto'
         });
+
     }
+
 });
 
 // ===============================
 // REGISTRAR VENTA
 // ===============================
 
-app.post("/ventas", async(req, res) => {
+app.post('/ventas', async(req, res) => {
 
     const { carrito } = req.body;
 
@@ -212,16 +264,16 @@ app.post("/ventas", async(req, res) => {
 
         for(const producto of carrito){
 
-            await sql.request()
+            await new sql.Request()
 
                 .input(
-                    "cantidad",
+                    'cantidad',
                     sql.Decimal(10,2),
                     producto.cantidad
                 )
 
                 .input(
-                    "id",
+                    'id',
                     sql.Int,
                     producto.id_producto
                 )
@@ -231,10 +283,11 @@ app.post("/ventas", async(req, res) => {
                     SET stock = stock - @cantidad
                     WHERE id_producto = @id
                 `);
+
         }
 
         res.json({
-            success:true
+            success: true
         });
 
     } catch(error){
@@ -242,13 +295,21 @@ app.post("/ventas", async(req, res) => {
         console.log(error);
 
         res.status(500).json({
-            message:"Error venta"
+            message: 'Error registrando venta'
         });
+
     }
+
 });
+
+// ===============================
+// SERVIDOR
+// ===============================
 
 const PORT = 3000;
 
 app.listen(PORT, () => {
+
     console.log(`Servidor corriendo en puerto ${PORT}`);
+
 });
