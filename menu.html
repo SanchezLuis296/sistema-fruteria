@@ -36,6 +36,10 @@
             <div class="menu-title">Reportes</div>
         </div>
 
+        <div class="menu-card" onclick="go('dashboard.html')">
+            <div class="menu-icon">📈</div>
+            <div class="menu-title">Dashboard</div>
+        </div>
     </div>
 
 </div>
@@ -48,6 +52,15 @@ if(!localStorage.getItem("usuario")){
     window.location.href = "login.html";
 }
 
+function cerrarSesion(){
+
+    localStorage.removeItem("usuario");
+
+    window.location.href = "login.html";
+
+}
+
 </script>
+
 
 </body>
