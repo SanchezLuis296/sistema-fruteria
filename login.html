@@ -1,90 +1,191 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
 <head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Login - Frutería Nenita</title>
+
+    <!-- CSS -->
     <link rel="stylesheet" href="styles.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- BOOTSTRAP -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
 </head>
 
 <body>
 
-<div class="login-container">
+    <!-- CONTENEDOR LOGIN -->
+    <div class="login-container">
 
-    <div class="login-box">
+        <div class="login-box">
 
-        <img src="fn.png" class="logo">
+            <!-- LOGO -->
+            <img
+                src="fn.png"
+                class="logo"
+            >
 
-        <div class="login-title">
-            Bienvenido
-        </div>
+            <!-- TITULO -->
+            <div class="login-title">
 
-        <input
-            type="text"
-            id="username"
-            placeholder="Usuario"
-        >
+                Bienvenido
 
-        <input
-            type="password"
-            id="password"
-            placeholder="Contraseña"
-        >
+            </div>
 
-        <button onclick="login()">
-            Ingresar
-        </button>
+            <!-- INPUT USUARIO -->
+            <input
+                type="text"
+                id="username"
+                placeholder="Usuario"
+            >
 
-        <div class="alert">
-            🍎 Sistema sencillo y rápido para empleados.
+            <!-- INPUT PASSWORD -->
+            <input
+                type="password"
+                id="password"
+                placeholder="Contraseña"
+            >
+
+            <!-- BOTON LOGIN -->
+            <button onclick="login()">
+
+                Ingresar
+
+            </button>
+
         </div>
 
     </div>
 
-</div>
+    <!-- SCRIPT GLOBAL -->
+    <script src="script.js"></script>
 
-<script src="script.js"></script>
+    <!-- LOGIN -->
+    <script>
 
-<script>
-async function login() {
+        async function login() {
 
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
+            // =========================
+            // OBTENER DATOS
+            // =========================
 
-    if(username === "" || password === ""){
-        alert("Completa todos los campos");
-        return;
-    }
+            const username =
+                document.getElementById(
+                    "username"
+                ).value;
 
-    try {
+            const password =
+                document.getElementById(
+                    "password"
+                ).value;
 
-        const response = await fetch("http://localhost:3000/login", {
-            method: "POST",
-            headers: {
-                "Content-Type":"application/json"
-            },
-            body: JSON.stringify({
-                username,
-                password
-            })
-        });
+            // =========================
+            // VALIDAR CAMPOS
+            // =========================
 
-        const data = await response.json();
+            if(
+                username === "" ||
+                password === ""
+            ){
 
-        if(data.success){
+                alert(
+                    "Completa todos los campos"
+                );
 
-            localStorage.setItem(
-    "usuario",
-    JSON.stringify(data.usuario)
-);
+                return;
+            }
 
-            window.location.href = "menu.html";
+            // =========================
+            // LOGIN
+            // =========================
 
-        }else{
-            alert(data.message);
+            try {
+
+                const response = await fetch(
+                    "http://localhost:3000/login",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            username,
+                            password
+                        })
+                    }
+                );
+
+                const data =
+                    await response.json();
+
+                // =========================
+                // LOGIN EXITOSO
+                // =========================
+
+                if(data.success){
+
+                    // GUARDAR USUARIO
+
+                    localStorage.setItem(
+
+                        "usuario",
+
+                        JSON.stringify(
+                            data.usuario
+                        )
+                    );
+
+                    // REDIRECCION POR ROL
+
+                    if(
+                        data.usuario.rol ===
+                        "Administrador"
+                    ){
+
+                        window.location.href =
+                            "menu.html";
+
+                    } else {
+
+                        window.location.href =
+                            "ventas.html";
+
+                    }
+
+                } else {
+
+                    alert(
+                        "Usuario o contraseña incorrectos"
+                    );
+                }
+
+            } catch(error){
+
+                console.log(error);
+
+                alert(
+                    "Error del servidor"
+                );
+            }
         }
 
-    } catch(error){
-        alert("Error del servidor");
-    }
-}
-</script>
+    </script>
 
 </body>
+
+</html>

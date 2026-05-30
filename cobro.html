@@ -53,6 +53,13 @@ if(!localStorage.getItem("usuario")){
     window.location.href = "login.html";
 }
 
+function cerrarSesion(){
+
+    localStorage.removeItem("usuario");
+
+    window.location.href = "login.html";
+
+}
 </script>
 
 </body>
